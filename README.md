@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# RAG Chatbot
 
-## Getting Started
+A streaming chatbot that answers questions from your own documents using retrieval-augmented generation (RAG). Content is stored as embeddings in a vector database; each question retrieves the most relevant chunks and the model answers from them.
 
-First, run the development server:
+Built during the Headstarter Software Engineering Fellowship (2024).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Tech stack
+
+- **Next.js 14** (App Router), **TypeScript**, Tailwind CSS
+- **Upstash RAG Chat**: retrieval-augmented generation pipeline
+- **Upstash Vector** (embeddings store) and **Upstash Redis** (chat history)
+- **Meta Llama 3 8B Instruct** as the answering model
+- **Vercel AI SDK** (`ai/react`) for streaming chat in the UI
+
+## How it works
+
+```
+Question ─▶ /api/chat-stream ─▶ retrieve relevant chunks from Upstash Vector
+         ─▶ Llama 3 answers using them ─▶ response streamed to the browser
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- `src/app/lib/rag-chat.ts`: RAG pipeline setup
+- `src/app/api/chat-stream/route.ts`: streaming chat endpoint (up to 30s responses)
+- `src/components/ChatWrapper.tsx`: chat UI using `useChat`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Running locally
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+1. Create an Upstash account and a Vector index.
+2. Copy `.env.example` to `.env` and fill in the values.
+3. Run:
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```bash
+npm install
+npm run dev
+```
